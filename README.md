@@ -14,7 +14,7 @@ The agent was trained on CelebA face images for 3 million steps. Both algorithms
 
 ## How It Works
 
-The environment presents the agent with a target image and a blank canvas. At each step, the agent outputs a 13-dimensional action representing a brush stroke (Bezier control points, radius, and RGBA color). A pretrained neural renderer converts these parameters into actual pixels on the canvas. The reward at each step is the reduction in L2 distance between the current canvas and the target image. Episodes run for a fixed number of steps (default 40).
+The environment presents the agent with a target image and a blank canvas. At each step, the agent outputs a 65-dimensional (5 strokes × 13 params each) action representing a brush stroke (Bezier control points, radius, and RGB color). A pretrained neural renderer converts these parameters into actual pixels on the canvas. The reward at each step is the reduction in L2 distance between the current canvas and the target image. Episodes run for a fixed number of steps (default 40).
 
 The neural renderer (renderer.pkl) is frozen during RL training. It was pretrained separately to map stroke parameter vectors to rasterized stroke images.
 
@@ -70,7 +70,7 @@ The core RL environment. Wraps the neural renderer into a Gym-style interface. M
 Implements Twin Delayed DDPG (TD3). Uses two independent Q-networks to reduce overestimation bias, delays actor updates to every 2nd critic step, and adds clipped Gaussian noise to target actions during critic updates (target policy smoothing).
 
 **DRL/sac.py**
-Implements Soft Actor-Critic (SAC). Maximizes a maximum-entropy objective that encourages both high reward and high action entropy. Uses the reparameterization trick for the stochastic actor and automatically tunes the temperature parameter alpha via a target entropy constraint.
+Implements Soft Actor-Critic (SAC). Maximizes a maximum-entropy objective that encourages both high reward and high action entropy. Uses the reparameterization trick for the stochastic actor and uses a manual exponential decay schedule (α: 0.05 → 1e-6) via a target entropy constraint.
 
 **DRL/actor.py / DRL/critic.py**
 Network definitions for TD3. The actor is a deterministic MLP that outputs a 13-dim action squashed through tanh. The critic consists of two independent MLP heads, each taking a (state, action) pair and outputting a scalar Q-value.
