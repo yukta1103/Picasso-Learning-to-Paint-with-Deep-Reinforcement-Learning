@@ -61,55 +61,6 @@ Picasso-Learning-to-Paint-with-Deep-Reinforcement-Learning/
 
 ---
 
-## File Descriptions
-
-**env.py**
-The core RL environment. Wraps the neural renderer into a Gym-style interface. Maintains the canvas state, loads target images from CelebA, computes per-step L2 improvement rewards, and handles episode termination. Both training scripts import this directly.
-
-**DRL/td3.py**
-Implements Twin Delayed DDPG (TD3). Uses two independent Q-networks to reduce overestimation bias, delays actor updates to every 2nd critic step, and adds clipped Gaussian noise to target actions during critic updates (target policy smoothing).
-
-**DRL/sac.py**
-Implements Soft Actor-Critic (SAC). Maximizes a maximum-entropy objective that encourages both high reward and high action entropy. Uses the reparameterization trick for the stochastic actor and uses a manual exponential decay schedule (α: 0.05 → 1e-6) via a target entropy constraint.
-
-**DRL/actor.py / DRL/critic.py**
-Network definitions for TD3. The actor is a deterministic MLP that outputs a 13-dim action squashed through tanh. The critic consists of two independent MLP heads, each taking a (state, action) pair and outputting a scalar Q-value.
-
-**DRL/actor_sac.py / DRL/critic_sac.py**
-Network definitions for SAC. The actor outputs the mean and log-std of a Gaussian distribution over actions; samples are squashed through tanh. The critics are soft Q-networks whose targets incorporate the entropy bonus from the current policy.
-
-**DRL/rpm.py**
-Replay memory buffer. Stores (state, action, reward, next_state, done) transitions and supports random sampling for off-policy updates. Used by both TD3 and SAC.
-
-**DRL/evaluator.py**
-Runs periodic evaluation episodes during training without exploration noise. Saves rendered canvas images to disk so you can visually track reconstruction quality over the course of training.
-
-**DRL/multi.py**
-Handles batched environment interaction. Allows the training loop to step multiple (canvas, target) pairs to improve sample throughput.
-
-**DRL/wgan.py**
-A Wasserstein GAN discriminator used as an auxiliary reward signal. Provides a perceptual quality signal on top of the base L2 reward, encouraging the agent to produce more realistic-looking strokes.
-
-**Renderer/model.py**
-Architecture of the pretrained neural renderer. A fully connected network that maps a stroke parameter vector to a rasterized stroke image patch. Loaded from renderer.pkl at the start of training and kept frozen.
-
-**Renderer/stroke_gen.py**
-Procedural Bezier stroke generator used during renderer pretraining to create synthetic (parameter, raster) training pairs. Not used during RL training.
-
-**utils/util.py**
-Shared utilities: L2 distance computation between canvas and target, image tensor normalization, and numpy/PyTorch conversion helpers.
-
-**utils/tensorboard.py**
-Thin wrapper around SummaryWriter for logging training metrics (reward, actor loss, critic loss, alpha) to TensorBoard.
-
-**train_td3.py / train_sac.py**
-Training entry points. Each script initializes the environment and agent, warms up the replay buffer with random transitions, then runs the standard off-policy training loop with periodic evaluation and checkpoint saving.
-
-**test_sac.py / test.py**
-Evaluation scripts. Load a saved checkpoint and run the agent on a test image, saving the final reconstructed canvas for visual comparison against the target.
-
----
-
 ## Setup
 
 Requirements: Python 3.8+, PyTorch, OpenCV, Pillow, NumPy.
