@@ -1,0 +1,40 @@
+# Data and images
+data/
+baseline/data/
+image/
+baseline/image/
+*.png
+
+# Logs
+train_log/
+model/
+model_ppo/
+baseline/model/
+baseline/model_ppo/
+baseline/Paint-run*/
+baseline/Paint-PPO-run*/
+
+# Large files
+*.pth
+*.zip
+*.tar
+*.gz
+
+# Specific ignores
+replay_buffer.pkl
+train_state.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
